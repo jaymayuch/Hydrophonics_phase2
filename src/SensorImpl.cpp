@@ -323,10 +323,12 @@ namespace SensorInterface
             if( setParams.KitStart == 1)
             {
             Serial.println("**********Initialization State***************");
+#ifndef DEMO_MODE            
             checkTimerForNextState(state, eInitState, eReadTempSens);
+#endif            
             }
             else
-            {
+            {                
                 checkTimerForNextState(state, eInitState, eInitState);
             }
         }
@@ -512,6 +514,7 @@ namespace SensorInterface
         }
         if( state!=eCalibrationState )
         {
+#ifdef DEMO_MODE               
            // If not on manual control then use schedule timers
             if(measParams.manualpumpon == true)
             {
@@ -521,8 +524,9 @@ namespace SensorInterface
             {
                 ManualcontrolPump(false);                
             } 
-
+#endif
            ctrlWaterPump();
+#ifdef DEMO_MODE                 
             // If not on manual control then use schedule timers
             if(measParams.manuallighton == true)
             {
@@ -531,8 +535,9 @@ namespace SensorInterface
             else 
             {
                 ManualcontrolLights(false);                
-            }            
 
+            }            
+#endif
             controlLights();
            getWaterLevelinCm();
         }

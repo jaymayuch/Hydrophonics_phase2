@@ -292,12 +292,12 @@ namespace ModemInterface
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
                 }
+#ifdef DEMO_MODE                
                 if(strcmp(JsonCmd["cmd"], "LIGHTS_ON") == 0)
                 {
                      Serial.println("*****************LIGHTS_ON Recvd**********");
                     Response["cmd"] = "LIGHTS_ON_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
+                    Response["success"] = 1;                          
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
                     measParams.manuallighton = true;
@@ -306,39 +306,83 @@ namespace ModemInterface
                 {
                      Serial.println("*****************LIGHTS_OFF Recvd**********");
                     Response["cmd"] = "LIGHTS_OFF_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
+                    Response["success"] = 1;                          
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
                     measParams.manuallighton = false;
                 }
-                if(strcmp(JsonCmd["cmd"], "PUMP_ON") == 0)
+                if(strcmp(JsonCmd["cmd"], "WATER_ON") == 0)
                 {
-                     Serial.println("*****************PUMP_ON Recvd**********");
-                    Response["cmd"] = "PUMP_ON_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
+                     Serial.println("*****************WATER_ON Recvd**********");
+                    Response["cmd"] = "WATER_ON_RESPONSE";
+                    Response["success"] = 1;                          
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
                     measParams.manualpumpon = true;
                 }
-                if(strcmp(JsonCmd["cmd"], "PUMP_ON_OFF") == 0)
+                if(strcmp(JsonCmd["cmd"], "WATER_OFF") == 0)
                 {
-                     Serial.println("*****************PUMP_OFF Recvd**********");
-                    Response["cmd"] = "PUMP_OFF_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
+                     Serial.println("*****************WATER_OFF Recvd**********");
+                    Response["cmd"] = "WATER_OFF_RESPONSE";
+                    Response["success"] = 1;                          
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
                     measParams.manualpumpon = false;
                 }
+
+                if(strcmp(JsonCmd["cmd"], "PH_INCREASE") == 0)
+                {
+                     Serial.println("*****************PH_INCREASE Recvd**********");
+                    Response["cmd"] = "PH_INCREASE_RESPONSE";
+                    Response["success"] = 1;                          
+                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
+                    valid =1;           
+                    measParams.f_PHValue +=1;                    
+                }
+                if(strcmp(JsonCmd["cmd"], "PH_DECREASE") == 0)
+                {
+                     Serial.println("*****************PH_DECREASE Recvd**********");
+                    Response["cmd"] = "PH_DECREASE_RESPONSE";
+                    Response["success"] = 1;      
+                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
+                    valid =1;           
+                    if( measParams.f_PHValue > 1 )
+                        measParams.f_PHValue -= 1;                    
+                    else
+                        measParams.f_PHValue = 0.00;                    
+                }
+                
+                if(strcmp(JsonCmd["cmd"], "EC_INCREASE") == 0)
+                {
+                     Serial.println("*****************EC_INCREASE Recvd**********");
+                    Response["cmd"] = "EC_INCREASE_RESPONSE";
+                    Response["success"] = 1;                          
+                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
+                    valid =1;           
+                    measParams.f_ECValue +=10;                     
+                }
+                if(strcmp(JsonCmd["cmd"], "EC_DECREASE") == 0)
+                {
+                     Serial.println("*****************EC_DECREASE Recvd**********");
+                    Response["cmd"] = "EC_DECREASE_RESPONSE";
+                    Response["success"] = 1;                          
+                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
+                    valid =1;           
+                     
+                    if( measParams.f_ECValue > 10 )
+                        measParams.f_ECValue -= 10;                    
+                    else
+                        measParams.f_ECValue = 0.00;                 
+                }
+
+#endif                
                 if(strcmp(JsonCmd["cmd"], "UPDATE") == 0)
                 {
                     Serial.println("*****************UPDATE Recvd**********");
                     Response["cmd"] = "UPDATE_RESPONSE";
                     Response["success"] = 1;                    
-                    measuredParams.f_PHValue =  JsonCmd["ph"];;
-                    measuredParams.f_ECValue = JsonCmd["ec"];;
+                    measuredParams.f_PHValue =  JsonCmd["ph"];
+                    measuredParams.f_ECValue = JsonCmd["ec"];
                     measuredParams.f_TempValue = JsonCmd["temp"];
                     //JsonCmd["lux"];                    
                     measParams.waterPumpOnTime = JsonCmd["motor_on_time"];

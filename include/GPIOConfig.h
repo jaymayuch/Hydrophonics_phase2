@@ -46,6 +46,8 @@
 
 #define TIMER_INSTANCE0        0
 
+#define DEMO_MODE              1
+
 //EEPROM Storage
 #define SIGNATURE              (0xDEADBEEF)
 #define CONFIG_VERSION         0x00000003
