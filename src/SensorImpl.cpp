@@ -512,6 +512,7 @@ namespace SensorInterface
         }
         if( state!=eCalibrationState )
         {
+#ifdef DEMO            
            // If not on manual control then use schedule timers
             if(measParams.manualpumpon == true)
             {
@@ -521,8 +522,10 @@ namespace SensorInterface
             {
                 ManualcontrolPump(false);                
             } 
-
+#endif
            ctrlWaterPump();
+
+#ifdef DEMO           
             // If not on manual control then use schedule timers
             if(measParams.manuallighton == true)
             {
@@ -532,7 +535,7 @@ namespace SensorInterface
             {
                 ManualcontrolLights(false);                
             }            
-
+#endif
             controlLights();
            getWaterLevelinCm();
         }
