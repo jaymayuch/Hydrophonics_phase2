@@ -34,7 +34,7 @@
 #define MODEM_TX             MODEM_TX_PIN
 #define MODEM_RX             MODEM_RX_PIN
 
-#define DEVICE_ID           "21111111111112"
+#define DEVICE_ID           "111111111111111"
 
 
 #ifdef WIFI
@@ -118,15 +118,16 @@ namespace ModemInterface
                 }
                  GSM_CONNECT_OK = 1;
             #endif
-#ifdef MODEM_POWER_CONTROL            
+//#ifdef MODEM_POWER_CONTROL            
             //Turn on  Modem logic and wait for 5sec
-            digitalWrite(MODEM_POWER_SWITCH, LOW);
+            
             do
             {
                 yield();
                 delayMicroseconds(5000000); //5secs
+                digitalWrite(MODEM_POWER_SWITCH, LOW);
             }while(!modem.testAT(100));
-#endif
+//#endif
             modem.waitForNetwork(600000L);
              Serial.println("Modem connecting");
             #ifndef WIFI   
@@ -337,7 +338,7 @@ namespace ModemInterface
                     Response["success"] = 1;                          
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
-                    measParams.f_PHValue +=1;                    
+                    measParams.f_PHValue +=5;                    
                 }
                 if(strcmp(JsonCmd["cmd"], "PH_DECREASE") == 0)
                 {
@@ -347,7 +348,7 @@ namespace ModemInterface
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
                     if( measParams.f_PHValue > 1 )
-                        measParams.f_PHValue -= 1;                    
+                        measParams.f_PHValue -= 5;                    
                     else
                         measParams.f_PHValue = 0.00;                    
                 }
@@ -359,7 +360,7 @@ namespace ModemInterface
                     Response["success"] = 1;                          
                     Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
                     valid =1;           
-                    measParams.f_ECValue +=10;                     
+                    measParams.f_ECValue +=100;                     
                 }
                 if(strcmp(JsonCmd["cmd"], "EC_DECREASE") == 0)
                 {
@@ -370,7 +371,7 @@ namespace ModemInterface
                     valid =1;           
                      
                     if( measParams.f_ECValue > 10 )
-                        measParams.f_ECValue -= 10;                    
+                        measParams.f_ECValue -= 100;                    
                     else
                         measParams.f_ECValue = 0.00;                 
                 }
@@ -466,18 +467,21 @@ namespace ModemInterface
       if ((!client.connected())||(!modem.isGprsConnected())||(!((modem.getRegistrationStatus()==REG_OK_HOME)
       ||((modem.getRegistrationStatus()==REG_OK_ROAMING)))))
       {        
+        digitalWrite(MODEM_POWER_SWITCH, HIGH);
+        Serial.println("Modem Reset Switch");  
         GSM_CONNECT_OK = false;
         GSM_reconnect = true;
       }
-#ifdef MODEM_POWER_CONTROL   
+//#ifdef MODEM_POWER_CONTROL   
 	//TODO if modem not responding to AT due to hang
       if(!modem.testAT(100))
       {
            digitalWrite(MODEM_POWER_SWITCH, HIGH); //Power off modem
+           Serial.println("Modem Reset Switch");  
            GSM_CONNECT_OK = false;
            GSM_reconnect = true;
       }
-#endif      
+//#endif      
     }
  
    }
