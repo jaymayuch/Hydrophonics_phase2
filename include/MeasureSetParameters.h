@@ -32,9 +32,7 @@ typedef struct
    uint32_t EC_dosingPump_low_BTime;
    uint32_t EC_dosingPump_highTime;
    uint32_t waterLevelInCm;  
-   uint32_t u32_CurrMeasureFreqInSec;     
-   bool   manuallighton;
-   bool   manualpumpon;
+  uint32_t u32_CurrMeasureFreqInSec;     
   // float waterLevelInCm;
 }MeasurementParams_t;
 
@@ -46,10 +44,10 @@ typedef struct
   float    f_EC_HighThreshold = 900;
   float    f_Temp_LowThreshold = 5;
   float    f_Temp_HighThreshold = 30;
-  uint32_t u32_LightsOnTime = 64800;
-  uint32_t u32_LightsOffTime = 60;  
-  uint32_t u32_PumpOnTime = 64800;  
-  uint32_t u32_PumpOffTime = 60;  
+  uint32_t u32_LightsOnTime = 3600;
+  uint32_t u32_LightsOffTime = 10;  
+  uint32_t u32_PumpOnTime = 3600;  
+  uint32_t u32_PumpOffTime = 10;  
   bool     isWaterLevelFull;
   float    f_PH_LowThresholdMin = 2;
   float    f_PH_LowThresholdMax = 14;
@@ -57,7 +55,7 @@ typedef struct
   float    f_EC_HighThresholdMax = 2000;
   float    f_Temp_LowThresholdMin = 0;
   float    f_Temp_HighThresholdMax = 40;
-  uint32_t u32_MeasureFreqInSec = 5;   ///measurement delay
+  uint32_t u32_MeasureFreqInSec = 3600;
   uint8_t  u8_DosageTurnOn = 1;
   uint32_t container_height = 20;
   uint32_t water_height = 20;

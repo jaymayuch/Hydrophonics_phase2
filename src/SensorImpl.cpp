@@ -135,7 +135,7 @@ namespace SensorInterface
 
     hydroProcessStates_t processStateCtx[eNumOfStates] =
         {
-            //State                  TimeCount(sec)      Current Count(sec)
+                    //State                  TimeCount(sec)      Current Count(sec)
             {eInitState, 5, 0},
             {eReadTempSens, 5, 0},     
             {eTurnOnTDSSensor, 5, 0},
@@ -168,9 +168,8 @@ namespace SensorInterface
             {eCalibrationState, 2, 0}};
 
     hydroProcessStates state = eInitState;
-    hydroProcessStates waterPumpstate = eTurnOnWaterPump; //at begining of kit water pump will on  //eTurnOffWaterPump;
-    hydroProcessStates lightstate = eTurnOnLight; //eTurnOffLight;
-    
+    hydroProcessStates waterPumpstate = eTurnOnWaterPump; ; //at begining of kit water pump will on  //eTurnOffWaterPump;
+    hydroProcessStates lightstate = eTurnOnLight; ; //eTurnOffLight;
 
     void setStateTimerinSec(hydroProcessStates &state, uint32_t timeInSec)
     {
@@ -253,56 +252,9 @@ namespace SensorInterface
             checkTimerForNextState(lightstate, eTurnOnLight, eTurnOffLight);
             measParams.lightPumpOnTime = getElapsedTimeInSec(eTurnOnLight);
             Serial.println("**********Light ON **********");
-            Serial.print("Light On time=");
+            Serial.print("Light off time=");
             Serial.print(measParams.lightPumpOnTime);
             Serial.println();
-        }
-    }
-    void Sensors::ManualcontrolLights(bool on)
-    {
-        if(on==true)
-        {
-            if(lightstate!=eTurnOnLight)
-            {
-                processStateCtx[lightstate].currtimeCountInSec = 0;
-                lightstate = eTurnOnLight;            
-                Serial.print("Manually Light turned On");
-                Serial.println();
-            }
-        }
-        else
-        {            
-            if(lightstate!=eTurnOffLight)         
-            {
-                processStateCtx[lightstate].currtimeCountInSec = 0;
-                lightstate = eTurnOffLight;   
-                Serial.print("Manually Light turned Off");
-                Serial.println();
-            }                        
-        }
-    }
-
-    void Sensors::ManualcontrolPump(bool on)
-    {
-        if(on==true)
-        {
-            if(waterPumpstate!=eTurnOnWaterPump)
-            {
-                processStateCtx[lightstate].currtimeCountInSec = 0;
-                waterPumpstate = eTurnOnWaterPump;            
-                Serial.print("Manually Water Pump turned On");
-                Serial.println();
-            }
-        }
-        else
-        {            
-            if(waterPumpstate!=eTurnOffWaterPump)         
-            {
-                processStateCtx[lightstate].currtimeCountInSec = 0;
-                waterPumpstate = eTurnOffWaterPump;   
-                Serial.print("Manually Water pump turned Off");
-                Serial.println();
-            }                        
         }
     }
 
@@ -318,7 +270,8 @@ namespace SensorInterface
 #endif        
         switch (state)
         {
-        case eInitState:
+      
+     case eInitState:
         {
             if( setParams.KitStart == 1)
             {
@@ -330,6 +283,7 @@ namespace SensorInterface
                 checkTimerForNextState(state, eInitState, eInitState);
             }
         }
+
         break;
         case eReadTempSens:
         {
@@ -397,7 +351,7 @@ namespace SensorInterface
             }
             else
             {
-                checkTimerForNextState(state, eValidateMeasurementTDS, eDelayBetweenMeas);                
+                checkTimerForNextState(state, eValidateMeasurementTDS, eDelayBetweenMeas);
             }
             dosageSystem.ClearTimers();
         }
@@ -512,32 +466,12 @@ namespace SensorInterface
         }
         if( state!=eCalibrationState )
         {
-#ifdef DEMO            
-           // If not on manual control then use schedule timers
-            if(measParams.manualpumpon == true)
+            if (setParams.KitStart == 1)
             {
-                ManualcontrolPump(true);
-            }
-            else 
-            {
-                ManualcontrolPump(false);                
-            } 
-#endif
            ctrlWaterPump();
-
-#ifdef DEMO           
-            // If not on manual control then use schedule timers
-            if(measParams.manuallighton == true)
-            {
-                ManualcontrolLights(true);
-            }
-            else 
-            {
-                ManualcontrolLights(false);                
-            }            
-#endif
-            controlLights();
+           controlLights();
            getWaterLevelinCm();
+           }
         }
     }
     

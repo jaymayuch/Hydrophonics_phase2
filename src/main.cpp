@@ -80,11 +80,11 @@ void initAnlgDigitalPorts()
   // AC SUPPLY PORTS
   pinMode(WATER_PUMP, OUTPUT);
   pinMode(AC2, OUTPUT);
-  pinMode(MODEM_POWER_SWITCH, OUTPUT);
+  pinMode(AC3, OUTPUT);
   pinMode(AC4, OUTPUT);
   digitalWrite(WATER_PUMP, HIGH);
   digitalWrite(AC2, HIGH);
-  digitalWrite(MODEM_POWER_SWITCH, HIGH);
+  digitalWrite(AC3, HIGH);
   digitalWrite(AC4, HIGH);
   ///TRANSISTOR SWITCHES
   pinMode(TS_SUPPLY_GND, OUTPUT);

@@ -14,10 +14,12 @@
       
 #define MODEM_RX_PIN          2 
 #define MODEM_TX_PIN          15
+
+#define MODEM_POWER_SWITCH    19
       
 #define WATER_PUMP            16
 #define AC2                   17
-#define MODEM_POWER_SWITCH    19
+#define AC3                   19
 #define AC4                   4 
       
 #define ULTRA_TRIG_PIN        5 

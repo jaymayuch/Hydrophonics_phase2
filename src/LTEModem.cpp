@@ -34,7 +34,7 @@
 #define MODEM_TX             MODEM_TX_PIN
 #define MODEM_RX             MODEM_RX_PIN
 
-#define DEVICE_ID           "21111111111112"
+#define DEVICE_ID          "21111111111112"
 
 
 #ifdef WIFI
@@ -118,15 +118,17 @@ namespace ModemInterface
                 }
                  GSM_CONNECT_OK = 1;
             #endif
-#ifdef MODEM_POWER_CONTROL            
+//#ifdef MODEM_POWER_CONTROL            
             //Turn on  Modem logic and wait for 5sec
-            digitalWrite(MODEM_POWER_SWITCH, LOW);
+            
             do
             {
                 yield();
                 delayMicroseconds(5000000); //5secs
+                digitalWrite(MODEM_POWER_SWITCH, LOW);
             }while(!modem.testAT(100));
-#endif
+//#endif
+         
             modem.waitForNetwork(600000L);
              Serial.println("Modem connecting");
             #ifndef WIFI   
@@ -221,7 +223,7 @@ namespace ModemInterface
                  if(strcmp(JsonCmd["cmd"], "CONNECT_RESPONSE") == 0)                      
                  {                   
                        Response["cmd"] = "INIT";
-                       Response["mac_address"] = DEVICE_ID;//modem.getIMEI();
+                       Response["mac_address"] = modem.getIMEI();
                        Response["uid"] = JsonCmd["uid"];  
                        if(GSM_reconnect)
                             Response["network_resume"] = 1;       
@@ -243,7 +245,7 @@ namespace ModemInterface
                 if((strcmp(JsonCmd["cmd"], "HEART_BEAT") == 0))
                 {
                        Response["cmd"] = "HEART_BEAT_RESPONSE";
-                       Response["mac_address"] = DEVICE_ID;//modem.getIMEI();                                    
+                       Response["mac_address"] = modem.getIMEI();                                    
                        Response["success"] = 1;
                        Response["value"] = "ON";
                        Serial.println("*****************HEART_BEAT Recvd**********");  ;  
@@ -254,7 +256,7 @@ namespace ModemInterface
                     Serial.println("*****************GET Recvd**********");
                     Response["cmd"] = "GET_RESPONSE";
                     Response["success"] = 1;
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI();
+                    Response["mac_address"] = modem.getIMEI();
                     Response["value"]["ph"] = measuredParams.f_PHValue;
                     Response["value"]["ec"] = measuredParams.f_ECValue;
                     Response["value"]["temp"] = measuredParams.f_TempValue;
@@ -269,8 +271,9 @@ namespace ModemInterface
                     Response["value"]["dosage_ec_low_count"] = measParams.EC_dosingPump_low_ATime;    
                     //Response["dosage_ec_lowA_count"] = measParams.EC_dosingPump_low_ATime;
                     //Response["dosage_ec_lowB_count"] = measParams.EC_dosingPump_low_BTime;
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI();
+                    Response["mac_address"] = modem.getIMEI();
                     valid =1;
+                    setParams.KitStart = 1;  //not required just for testing //*****************************************
                 }
                 if(strcmp(JsonCmd["cmd"], "DOSE_ON") == 0)
                 {
@@ -280,7 +283,7 @@ namespace ModemInterface
                     Response["cmd"] = "DOSE_ON_RESPONSE";
                     Response["success"] = 1;    
                     setParams.u8_DosageTurnOn = 1;
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI();
+                    Response["mac_address"] = modem.getIMEI();
                     valid =1;
                 }
                 if(strcmp(JsonCmd["cmd"], "DOSE_OFF") == 0)
@@ -289,48 +292,8 @@ namespace ModemInterface
                     Response["cmd"] = "DOSE_OFF_RESPONSE";
                     Response["success"] = 1;      
                     setParams.u8_DosageTurnOn = 0;  
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
+                    Response["mac_address"] = modem.getIMEI(); 
                     valid =1;           
-                }
-                if(strcmp(JsonCmd["cmd"], "LIGHTS_ON") == 0)
-                {
-                     Serial.println("*****************LIGHTS_ON Recvd**********");
-                    Response["cmd"] = "LIGHTS_ON_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
-                    valid =1;           
-                    measParams.manuallighton = true;
-                }
-                if(strcmp(JsonCmd["cmd"], "LIGHTS_OFF") == 0)
-                {
-                     Serial.println("*****************LIGHTS_OFF Recvd**********");
-                    Response["cmd"] = "LIGHTS_OFF_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
-                    valid =1;           
-                    measParams.manuallighton = false;
-                }
-                if(strcmp(JsonCmd["cmd"], "PUMP_ON") == 0)
-                {
-                     Serial.println("*****************PUMP_ON Recvd**********");
-                    Response["cmd"] = "PUMP_ON_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
-                    valid =1;           
-                    measParams.manualpumpon = true;
-                }
-                if(strcmp(JsonCmd["cmd"], "PUMP_ON_OFF") == 0)
-                {
-                     Serial.println("*****************PUMP_OFF Recvd**********");
-                    Response["cmd"] = "PUMP_OFF_RESPONSE";
-                    Response["success"] = 1;      
-                    //setParams.u8_DosageTurnOn = 0;  
-                    Response["mac_address"] = DEVICE_ID;//modem.getIMEI(); 
-                    valid =1;           
-                    measParams.manualpumpon = false;
                 }
                 if(strcmp(JsonCmd["cmd"], "UPDATE") == 0)
                 {
@@ -345,9 +308,9 @@ namespace ModemInterface
                     measParams.waterPumpOffTime = JsonCmd["motor_off_time"];
                     measParams.lightPumpOnTime = JsonCmd["lights_on_time"];
                     measParams.lightPumpOffTime  = JsonCmd["lights_off_time"];
-                    measParams.waterPumpOnTime *= 3600;
+                    measParams.waterPumpOnTime *= 50400;
                     measParams.waterPumpOffTime *= 3600;
-                    measParams.lightPumpOnTime *= 3600;
+                    measParams.lightPumpOnTime *= 64800;
                     measParams.lightPumpOffTime  *= 3600;
                     measParams.PH_dosingPump_highTime  = JsonCmd["dosage_ph_high_count"];
                     measParams.PH_dosingPump_lowTime  = JsonCmd["dosage_ph_low_count"];
@@ -377,8 +340,8 @@ namespace ModemInterface
                         setParams.u32_LightsOffTime = JsonCmd["lights_off_time"];                        
                         setParams.u32_LightsOffTime *= 3600;
                         setParams.container_height = JsonCmd["container_height"];              
-                        setParams.water_height = JsonCmd["water_height"];   
-                        setParams.KitStart = 1;           
+                        setParams.water_height = JsonCmd["water_height"];     
+                        setParams.KitStart = 1;             
 
                         // uint32_t len;
                         // char periodic_check[20] = {0};                        
@@ -389,7 +352,7 @@ namespace ModemInterface
                         // setParams.u32_MeasureFreqInSec *= 3600;
                         setParams.u32_MeasureFreqInSec = 5;
 
-                        Response["mac_address"] = DEVICE_ID;//modem.getIMEI();
+                        Response["mac_address"] = modem.getIMEI();
                         Response["cmd"] = "SET_RESPONSE";
                         Response["success"] = 1;  
                         valid =1;                                            
@@ -422,18 +385,18 @@ namespace ModemInterface
       if ((!client.connected())||(!modem.isGprsConnected())||(!((modem.getRegistrationStatus()==REG_OK_HOME)
       ||((modem.getRegistrationStatus()==REG_OK_ROAMING)))))
       {        
+        digitalWrite(MODEM_POWER_SWITCH, HIGH);
+        Serial.println("Modem Reset Switch(NET DISCONNECTED)");  
         GSM_CONNECT_OK = false;
         GSM_reconnect = true;
       }
-#ifdef MODEM_POWER_CONTROL   
-	//TODO if modem not responding to AT due to hang
       if(!modem.testAT(100))
       {
            digitalWrite(MODEM_POWER_SWITCH, HIGH); //Power off modem
+           Serial.println("Modem Reset Switch(MODEM NO RESPONSE)");  
            GSM_CONNECT_OK = false;
            GSM_reconnect = true;
       }
-#endif      
     }
  
    }

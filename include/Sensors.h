@@ -34,7 +34,5 @@ namespace SensorInterface
         void MeasurementProcess(void);
         void controlLights();
         long getWaterLevelinCm();
-        void ManualcontrolLights(bool on);
-        void ManualcontrolPump(bool on);
     };
 }
